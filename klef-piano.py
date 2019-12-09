@@ -31,9 +31,10 @@ class KitronikPiano:
         buff = bytearray(1)
         buff2 = bytearray(2)
         buff3 = bytearray(5)
+        pin1.set_pull(pin1.PULL_UP)
         # Startup procedure
         # Test /change pin is low, then test basic communication
-        if pin1.read_digital():
+        if (pin1.read_digital()==0):
             # Reads the chip ID, should be 0x11 (chip ID addr = 0)
             buff[0] = 0
             i2c.write(self.CHIP_ADDRESS, buff, False)
@@ -74,7 +75,7 @@ class KitronikPiano:
         i2c.write(self.CHIP_ADDRESS, buff, False)
         buff3 = i2c.read(self.CHIP_ADDRESS, 5, False)
         # Continue reading change status address until /change pin goes high
-        while pin1.read_digital():
+        while (pin1.read_digital()==0):
             buff[0] = 2
             i2c.write(self.CHIP_ADDRESS, buff, False)
             buff3 = i2c.read(self.CHIP_ADDRESS, 5, False)
@@ -126,8 +127,8 @@ class KitronikPiano:
 
 #Test program will run forever
 #Each key press will play a different note (Up and Down arrow not used)
+piano = KitronikPiano
 while True:
-    piano = KitronikPiano
     
     if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K9) is True:
         music.play('c4')
