@@ -3,7 +3,6 @@ import music
 #Class for driving the Kitronik :KLEF Piano
 class KitronikPiano:
     CHIP_ADDRESS = 0x0D
-    INITIALISED = False
     
     class PianoKeys:
         KEY_K0 = 0x100
@@ -27,7 +26,7 @@ class KitronikPiano:
     keyRegValue = 0x0000
     
     #Function to initialise the micro:bit Piano (called on first key press after start-up)
-    def __initPiano(self):
+    def __init__(self):
         buff = bytearray(1)
         buff2 = bytearray(2)
         buff3 = bytearray(5)
@@ -36,11 +35,15 @@ class KitronikPiano:
         # Test /change pin is low, then test basic communication
         if (pin1.read_digital()==0):
             # Reads the chip ID, should be 0x11 (chip ID addr = 0)
-            buff[0] = 0
+            buff[0] = 0x00
             i2c.write(self.CHIP_ADDRESS, buff, False)
-            buff = i2c.read(self.CHIP_ADDRESS, 1, False)
-            while buff[0] != 0x11:
-                buff = i2c.read(self.CHIP_ADDRESS, 1, False)
+            reading = True
+            while reading:
+                readBuff = i2c.read(self.CHIP_ADDRESS, 1, False)
+                print(readBuff)
+                sleep(100)
+                if (readBuff == 0x11):
+                    reading = False
             
             # Change sensitivity (burst length) of keys 0-14 to keySensitivity (default is 8)
             for sensitivityReg in range(54, 69, 1):
@@ -71,27 +74,26 @@ class KitronikPiano:
             i2c.write(self.CHIP_ADDRESS, buff2, False)
 
         # Read all change status address (General Status addr = 2)
-        buff[0] = 2
+        buff[0] = 0x02
         i2c.write(self.CHIP_ADDRESS, buff, False)
         buff3 = i2c.read(self.CHIP_ADDRESS, 5, False)
         # Continue reading change status address until /change pin goes high
         while (pin1.read_digital()==0):
-            buff[0] = 2
+            buff[0] = 0x02
             i2c.write(self.CHIP_ADDRESS, buff, False)
             buff3 = i2c.read(self.CHIP_ADDRESS, 5, False)
-        self.INITIALISED = True
         
     #Set sensitivity of capacitive touch keys, then initialise the IC.
     #A higher value increases the sensitivity (values can be in the range 1 - 32).
     def setKeySensitivity(self, sensitivity):
         self.keySensitivity = sensitivity
-        self.__initPiano()
+        self.__init__()
         
     #Set the noise threshold of capacitive touch keys, then initialise the IC.
     #A higher value enables the piano to be used in areas with more electrical noise (values can be in the range 1 - 63).
     def setKeyNoiseThreshold(self, noiseThreshold):
         self.keyNoiseThreshold = noiseThreshold
-        self.__initPiano()
+        self.__init__()
     
     #Function to read the Key Press Registers
     #Return value is a combination of both registers (3 and 4) which links with the values in the 'PianoKeys' class
@@ -99,12 +101,12 @@ class KitronikPiano:
         buff = bytearray(1)
         buff2 = bytearray(2)
         buff3 = bytearray(5)
-        buff[0] = 2
+        buff[0] = 0x02
         i2c.write(self.CHIP_ADDRESS, buff, False)
         buff3 = i2c.read(self.CHIP_ADDRESS, 5, False)
 
         # Address 3 is the addr for keys 0-7 (this will then auto move onto Address 4 for keys 8-15, both reads stored in buff2)
-        buff[0] = 3
+        buff[0] = 0x03
         i2c.write(self.CHIP_ADDRESS, buff, False)
         buff2 = i2c.read(self.CHIP_ADDRESS, 2, False)
 
@@ -117,42 +119,39 @@ class KitronikPiano:
     def keyIsPressed(self, key: PianoKeys):
         keyPressed = False
 
-        if self.INITIALISED is False:
-            self.__initPiano(self)
-
-        if (key & self._readKeyPress(self)) == key:
+        if (key & self._readKeyPress()) == key:
             keyPressed = True
 
         return keyPressed
 
 #Test program will run forever
 #Each key press will play a different note (Up and Down arrow not used)
-piano = KitronikPiano
+piano = KitronikPiano()
 while True:
     
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K9) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K9) is True:
         music.play('c4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K1) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K1) is True:
         music.play('c#4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K10) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K10) is True:
         music.play('d4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K2) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K2) is True:
         music.play('d#4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K11) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K11) is True:
         music.play('e4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K12) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K12) is True:
         music.play('f4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K3) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K3) is True:
         music.play('f#4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K13) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K13) is True:
         music.play('g4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K4) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K4) is True:
         music.play('g#4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K14) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K14) is True:
         music.play('a4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K5) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K5) is True:
         music.play('a#4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K6) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K6) is True:
         music.play('b4')
-    if piano.keyIsPressed(piano, piano.PianoKeys.KEY_K7) is True:
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K7) is True:
         music.play('c5')
