@@ -40,8 +40,6 @@ class KitronikPiano:
             reading = True
             while reading:
                 readBuff = i2c.read(self.CHIP_ADDRESS, 1, False)
-                print(readBuff)
-                sleep(100)
                 if (readBuff == 0x11):
                     reading = False
             
