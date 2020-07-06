@@ -40,7 +40,7 @@ class KitronikPiano:
             reading = True
             while reading:
                 readBuff = i2c.read(self.CHIP_ADDRESS, 1, False)
-                if (readBuff == 0x11):
+                if (readBuff[0] == 0x11):
                     reading = False
             
             # Change sensitivity (burst length) of keys 0-14 to keySensitivity (default is 8)
