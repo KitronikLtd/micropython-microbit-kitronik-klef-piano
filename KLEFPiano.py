@@ -28,45 +28,60 @@ from microbit import set_volume
 volume = 100
 set_volume(volume)
 
-#Test program will run forever
-#Each key press will play a different note (Up and Down arrow not used)
+# Setup :KLEF Piano
 piano = KitronikPiano()
 
+# Will run forever listening for key presses
+# Each key press will play a different note
 while True:
-    # On V2 micro:bits only
+    # Up arrow key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K0):
         if volume < 250:
             volume += 50
+        # On V2 micro:bits only
         set_volume(volume)
-    # On V2 micro:bits only
+    # Down arrow key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K8):
         if volume > 0:
             volume -= 50
+        # On V2 micro:bits only
         set_volume(volume)
-        
+    # C key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K9):
         music.play('c4')
+    # C# key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K1):
         music.play('c#4')
+    # D key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K10):
         music.play('d4')
+    # D# key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K2):
         music.play('d#4')
+    # E key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K11):
         music.play('e4')
+    # F key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K12):
         music.play('f4')
+    # F# key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K3):
         music.play('f#4')
+    # G key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K13):
         music.play('g4')
+    # G# key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K4):
         music.play('g#4')
+    # A key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K14):
         music.play('a4')
+    # A# key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K5):
         music.play('a#4')
+    # B key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K6):
         music.play('b4')
+    # High C key
     if piano.keyIsPressed(piano.PianoKeys.KEY_K7):
         music.play('c5')
