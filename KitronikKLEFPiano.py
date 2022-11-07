@@ -61,7 +61,7 @@ class KitronikPiano:
         if pin1.read_digital() == 0:
             # Reads the chip ID, should be 0x11 (chip ID addr = 0)
             self.buff[0] = 0x00
-            i2c.write(self.CHIP_ADDRESS, self.buff, True)
+            i2c.write(self.CHIP_ADDRESS, self.buff, False)
             self.buff = i2c.read(self.CHIP_ADDRESS, 1, False)
             
             while self.buff[0] != 0x11:
