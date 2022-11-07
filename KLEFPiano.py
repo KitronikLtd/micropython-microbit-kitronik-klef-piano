@@ -23,10 +23,27 @@
 from KitronikKLEFPiano import *
 import music
 
+# On V2 micro:bits only
+from microbit import set_volume
+volume = 100
+set_volume(volume)
+
 #Test program will run forever
 #Each key press will play a different note (Up and Down arrow not used)
 piano = KitronikPiano()
+
 while True:
+    # On V2 micro:bits only
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K0):
+        if volume < 250:
+            volume += 50
+        set_volume(volume)
+    # On V2 micro:bits only
+    if piano.keyIsPressed(piano.PianoKeys.KEY_K8):
+        if volume > 0:
+            volume -= 50
+        set_volume(volume)
+        
     if piano.keyIsPressed(piano.PianoKeys.KEY_K9):
         music.play('c4')
     if piano.keyIsPressed(piano.PianoKeys.KEY_K1):
